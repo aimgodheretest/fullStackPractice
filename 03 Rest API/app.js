@@ -36,7 +36,17 @@ app.post("/jokes", (req, res) => {
   res.status(201).json(newJoke);
 });
 //5. PUT a joke
-
+app.put("/jokes/:id", (req, res) => {
+  const id = req.params.id;
+  const updatedJoke = {
+    id: id,
+    jokeText: req.body.text,
+    jokeType: req.body.type,
+  };
+  const searchIndx = jokes.findIndex((joke) => joke.id === id);
+  jokes[searchIndx] = updatedJoke;
+  res.json(updatedJoke);
+});
 //6. PATCH a joke
 
 //7. DELETE Specific joke
