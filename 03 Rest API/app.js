@@ -3,7 +3,6 @@ const app = express();
 const port = 3000;
 
 app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
 
 //1. GET a random joke
 app.get("/random", (req, res) => {
@@ -17,14 +16,25 @@ app.get("/jokes/:id", (req, res) => {
   const jokeFound = jokes.find((joke) => joke.id === id);
   res.status(200).json(jokeFound);
 });
+
 //3. GET a jokes by filtering on the joke type
 app.get("/filter", (req, res) => {
   const type = req.query.type;
   const filterJokesByType = jokes.filter((joke) => joke.jokeType === type);
   res.status(200).json(filterJokesByType);
 });
+
 //4. POST a new joke
-``
+app.post("/jokes", (req, res) => {
+  const newJoke = {
+    id: jokes.length + 1,
+    jokeText: req.body.text,
+    jokeType: req.body.type,
+  };
+  jokes.push(newJoke);
+  console.log(jokes[jokes.length - 1]);
+  res.status(201).json(newJoke);
+});
 //5. PUT a joke
 
 //6. PATCH a joke
