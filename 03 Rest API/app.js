@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const port = 3000;
 
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 //1. GET a random joke
@@ -37,7 +38,7 @@ app.post("/jokes", (req, res) => {
 });
 //5. PUT a joke
 app.put("/jokes/:id", (req, res) => {
-  const id = req.params.id;
+  const id = parseInt(req.params.id);
   const updatedJoke = {
     id: id,
     jokeText: req.body.text,
@@ -47,11 +48,32 @@ app.put("/jokes/:id", (req, res) => {
   jokes[searchIndx] = updatedJoke;
   res.json(updatedJoke);
 });
-//6. PATCH a joke
 
 //7. DELETE Specific joke
-
+app.delete("/jokes/:id", (req, res) => {
+  const id = parseInt(req.params.id);
+  const searchIndx = jokes.findIndex((joke) => joke.id === id);
+  if (searchIndx > -1) {
+    jokes.splice(searchIndx, 1);
+    res.status(200).json({ message: "Joke deleted successfully" });
+  } else {
+    res.status(404).json({ error: `Joke with the ${id} not found!` });
+  }
+});
 //8. DELETE All jokes
+const masterKey = "mK9X2pQ7Lw8Rf3Za";
+app.delete("/jokes/all", (req, res) => {
+  const uniqueKey = req.query.key;
+
+  if (uniqueKey === masterKey) {
+    jokes = [];
+    res.status(200).json({ message: `All Jokes Deleted!` });
+  } else {
+    res
+      .status(404)
+      .json({ error: `You do not have the access to delete jokes` });
+  }
+});
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
